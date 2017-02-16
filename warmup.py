@@ -30,15 +30,14 @@ def main():
     white_color = (0,0,0)
 
     color_array = []
-    '''
-    CREATE ALL COLORS
+
     for i in xrange(0,256):
         for j in xrange(0,256):
             for k in xrange(0,256):
                 color_array.append((i,j,k))
     color_pointer = 0
     print len(color_array)
-    '''
+
 
     # Game initialization
     pygame.init()
@@ -47,7 +46,7 @@ def main():
     clock = pygame.time.Clock()
 
     # Create circle to move
-    circle = Circle(screen,25,(250,250),blue_color,(5,5))
+    #circle = Circle(screen,25,(250,250),blue_color,(5,5))
 
 
     stop_game = False
@@ -60,22 +59,21 @@ def main():
 
 
         # Game logic
-        circle.updatePosition()
-        circle.updateDirection()
+        #circle.updatePosition()
+        #circle.updateDirection()
 
         # Draw background
         screen.fill(white_color)
-        circle.draw()
-        '''
-        PRINT ALL COLORS, ONE EACH TIME THROUGH THE LOOP
+        #circle.draw()
+
         screen.fill(color_array[color_pointer])
-        color_pointer += 1
-        '''
+        color_pointer += 7**5
+
 
         # Game display
 
         pygame.display.update()
-        clock.tick(1)
+        clock.tick(100)
 
 
 
