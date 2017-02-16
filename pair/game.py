@@ -7,8 +7,10 @@ KEY_LEFT = 276
 KEY_RIGHT = 275
 
 def overlap(c1, c2):
-    if c2.x in xrange(c1.x,c1.x + c1.dimensions[2]) or c2.y in xrange(c1.y, c1.y + c1.dimensions[3]):
+    if c2.x in xrange(c1.x,c1.x + c1.dimensions[2]) or c2.y in xrange(c1.y, c1.y + c1.dimensions[3]) or c2.x + c2.dimensions[2] in xrange(c1.x,c1.x + c1.dimensions[2]) or c2.y + c2.dimensions[3] in xrange(c1.y, c1.y + c1.dimensions[3]):
         return True
+    else:
+        return False
 
 
 
@@ -33,8 +35,8 @@ class Hero(object):
 
     def move(self):
         if self.x + self.dimensions[2] <= self.bounds[2] and self.y + self.dimensions[3] <= self.bounds[3] and self.x >= self.bounds[0] and self.y >= self.bounds[1]:
-                self.x += self.x_speed
-                self.y += self.y_speed
+            self.x += self.x_speed
+            self.y += self.y_speed
         elif self.x + self.dimensions[2] > self.bounds[2]:
             print "out of bound"
             print str(self.x) + "," + str(self.y)
@@ -53,14 +55,26 @@ class Hero(object):
             self.y = self.bounds[1]
 
 class Monster(object):
-    def __init__(self,image,screen):
+    def __init__(self,image,screen,others):
         self.image = image
         self.dimensions = image.get_rect()
         self.bounds = screen.get_rect()
-        self.x = random.randint(self.bounds[2] - self.dimensions[2])
-        self.y = random.randint(self.bounds[3] - self.dimensions[3])
+        self.set_location(others)
         self.x_speed = 1
         self.y_speed = 0
+
+    def set_location(self,others):
+        self.x = random.randint(self.bounds[0],self.bounds[2] - self.dimensions[2])
+        self.y = random.randint(self.bounds[1],self.bounds[3] - self.dimensions[3])
+        resetFlag = False
+        for i in others:
+            if overlap(i,self):
+                resetFlag = True
+        if resetFlag:
+            self.set_location(others)
+
+    def get_location(self):
+        return (self.x,self.y)
 
 
 
@@ -80,9 +94,16 @@ def main():
 
    print screen.get_rect()
 
+   characters = []
+
    # Game initialization
    hero_image = pygame.image.load('../images/hero.png').convert_alpha()
    hero = Hero(hero_image,screen)
+   characters.append(hero)
+
+   monster_image = pygame.image.load('../images/monster.png').convert_alpha()
+   monster = Monster(monster_image,screen,characters)
+   characters.append(monster)
 
    stop_game = False
    while not stop_game:
@@ -94,9 +115,9 @@ def main():
                # activate the cooresponding speeds
                # when an arrow key is pressed down
                if event.key == KEY_DOWN:
-                   hero.set_speed("y",-5)
-               elif event.key == KEY_UP:
                    hero.set_speed("y",5)
+               elif event.key == KEY_UP:
+                   hero.set_speed("y",-5)
                elif event.key == KEY_LEFT:
                    hero.set_speed("x",-5)
                elif event.key == KEY_RIGHT:
@@ -125,6 +146,7 @@ def main():
        # Game display
 
        screen.blit(hero.image, hero.get_location())
+       screen.blit(monster.image, monster.get_location())
 
        pygame.display.update()
 
